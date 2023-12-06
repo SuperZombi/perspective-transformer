@@ -1,16 +1,10 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>{{original_file}}</title>
-	<meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
-	<meta name='viewport' content='width=device-width'>
+{% extends 'base.html' %}
+{% block title %}{{original_file}}{% endblock %}
+{% block extra_head %}
 	<link rel="stylesheet" href="/static/css/results.css">
-</head>
-<body>
-	<div id="header">
-		<a href="/"><i class="fa fa-home"></i>Home</a>
-	</div>
+{% endblock %}
 
+{% block page %}
 	{% if status == 0 %}
 		<img src="{{original_file}}">
 		<h3>Your image is processing...</h3>
@@ -18,6 +12,9 @@
 		<script type="text/javascript">
 			setTimeout(_=>{window.location.reload()}, 3000)
 		</script>
+	{% elif status == 2 %}
+		<img src="/static/images/failed.gif" style="max-width: 100vw;">
+		<h2>Unable to process this image 😢</h2>
 	{% elif status == 1 %}
 		<img src="{{transformed}}">
 		<div>
@@ -40,5 +37,4 @@
 			</div>
 		</details>
 	{% endif %}
-</body>
-</html>
+{% endblock %}

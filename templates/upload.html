@@ -1,13 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Perspective Transformer</title>
-	<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />
-	<meta name='viewport' content='width=device-width'>
+{% extends 'base.html' %}
+{% block title %}Perspective Transformer{% endblock %}
+{% block extra_head %}
 	<link rel="stylesheet" href="/static/css/uploader.css">
 	<script src="/static/js/uploader.js" defer></script>
-</head>
-<body>
+{% endblock %}
+
+{% block page %}
 	<h2>Upload your Image</h2>
 
 	<!-- Upload  -->
@@ -30,5 +28,4 @@
 			</div>
 		</label>
 	</form>
-</body>
-</html>
+{% endblock %}

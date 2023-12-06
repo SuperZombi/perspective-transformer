@@ -1,8 +1,7 @@
-@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css);
-
 html, body, * {
 	box-sizing: border-box;
 	font-size: 16px;
+	font-family: sans-serif;
 }
 
 html, body {
@@ -11,12 +10,10 @@ html, body {
 }
 
 body {
-	padding: 2rem;
 	background: #f8f8f8;
 }
 
 h2 {
-	font-family: "Roboto", sans-serif;
 	font-size: 26px;
 	line-height: 1;
 	color: #454cad;
@@ -34,6 +31,7 @@ p {
 	margin: 0 auto;
 	width: 100%;
 	max-width: 600px;
+	padding: 0 1rem;
 }
 .uploader label {
 	float: left;
@@ -84,6 +82,7 @@ p {
 }
 .uploader #response #messages {
 	margin-bottom: 0.5rem;
+	word-break: break-word;
 }
 .uploader #file-image {
 	display: inline;

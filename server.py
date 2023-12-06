@@ -18,6 +18,10 @@ if os.path.exists("data.bd"):
 os.mkdir("data")
 DB = DataBase("data.bd", unique="id")
 
+@app.errorhandler(404)
+def page_not_found(e):
+	return render_template('404.html'), 404
+
 @app.route("/")
 def home():
 	return render_template("upload.html")
@@ -56,11 +60,14 @@ def image_worker(id, file):
 
 	def filepath(name): return os.path.basename(name)
 
-	row['binary'] = filepath(worker.preprocess())
-	row['contour'] = filepath(worker.findContours())
-	row['box'] = filepath(worker.findBox())
-	row['transformed'] = filepath(worker.apply_transform())
-	row['status'] = 1
+	try:
+		row['binary'] = filepath(worker.preprocess())
+		row['contour'] = filepath(worker.findContours())
+		row['box'] = filepath(worker.findBox())
+		row['transformed'] = filepath(worker.apply_transform())
+		row['status'] = 1
+	except:
+		row['status'] = 2
 	DB.save()
 
 

@@ -54,7 +54,7 @@ class Perspective:
 
     def findBox(self):
         # Округление контура до 4 точек
-        epsilon = 0.009 * cv2.arcLength(self.contour, True)
+        epsilon = 0.1 * cv2.arcLength(self.contour, True)
         self.approximations = cv2.approxPolyDP(self.contour, epsilon, True)
         self.approximations = self.approximations.reshape(4,2)
 

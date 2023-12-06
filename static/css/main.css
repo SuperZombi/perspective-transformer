@@ -1,0 +1,31 @@
+@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css);
+
+html, body {
+	text-align: center;
+	font-family: sans-serif;
+	margin: 0;
+	padding: 0;
+}
+
+#header{
+	height: 50px;
+	background: #f1f1f1;
+	margin-bottom: 1rem;
+	display: flex;
+	align-items: center;
+	padding: 0 1rem;
+}
+#header a{
+	text-decoration: none;
+	color: black;
+	font-size: 16pt;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+#header a:hover{
+	color: #454cad;
+}
+#header a:active{
+	color: #2A36D7;
+}
