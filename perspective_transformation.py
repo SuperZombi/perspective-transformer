@@ -3,7 +3,7 @@ import numpy as np
 from scipy.spatial import distance as dist
 
 # Загрузка изображения
-img = cv2.imread('2.jpg')
+img = cv2.imread('1.jpg')
 
 # Преобразование изображения в оттенки серого
 img_process = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
@@ -50,8 +50,9 @@ clean_cnt = contours[indexReturn]
 # cv2.imwrite('hull.png', cv2.drawContours(img, [contours[indexReturn]], 0, (0, 255, 0), 3))
 
 # Округление контура до 4 точек
-epsilon = 0.009 * cv2.arcLength(clean_cnt, True)
+epsilon = 0.1 * cv2.arcLength(clean_cnt, True)
 approximations = cv2.approxPolyDP(clean_cnt, epsilon, True)
+# print(approximations)
 approximations = approximations.reshape(4,2)
 
 # rect = cv2.minAreaRect(hull)
