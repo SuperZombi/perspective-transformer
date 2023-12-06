@@ -1,0 +1,95 @@
+@import url(https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css);
+
+html, body {
+	text-align: center;
+	font-family: sans-serif;
+	margin: 0;
+	padding: 0;
+}
+
+#header{
+	height: 50px;
+	background: #f1f1f1;
+	margin-bottom: 1rem;
+	display: flex;
+	align-items: center;
+	padding: 0 1rem;
+}
+#header a{
+	text-decoration: none;
+	color: black;
+	font-size: 16pt;
+	display: flex;
+	align-items: center;
+	gap: 6px;
+}
+#header a:hover{
+	color: #454cad;
+}
+#header a:active{
+	color: #2A36D7;
+}
+
+img{
+	max-height: 400px;
+	max-width: 400px;
+}
+.loader{
+	height: 80px;
+	width: 80px;
+	display: block;
+	margin: auto;
+}
+.button{
+	border-radius: 8px;
+	border-style: none;
+	box-sizing: border-box;
+	color: #fff;
+	cursor: pointer;
+	font-family: "RM Neue",sans-serif;
+	font-size: 100%;
+	line-height: 1.15;
+	margin: auto;
+	width: fit-content;
+	padding: 10px 21px;
+	text-align: center;
+	text-transform: none;
+	transition: color .13s ease-in-out,background .13s ease-in-out,opacity .13s ease-in-out,box-shadow .13s ease-in-out;
+	user-select: none;
+	-webkit-user-select: none;
+	touch-action: manipulation;
+}
+#download{
+	background-color: #2ea44f;
+	margin: 0.5rem;
+	display: inline-flex;
+	gap: 6px;
+	text-decoration: none;
+}
+#download:hover {
+	background-color: #2c974b;
+}
+#download:active {
+	background-color: #298e46;
+	box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
+}
+
+details{
+	margin: 10px;
+}
+details summary{
+	background-color: #0276FF;
+	font-size: 0.85rem !important;
+	opacity: 0.75;
+}
+details summary:hover {
+	background-color: #0067E1;
+	opacity: 1;
+}
+details summary:active {
+	background-color: #0060D3;
+}
+
+details .content{
+	padding: 10px;
+}
