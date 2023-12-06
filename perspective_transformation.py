@@ -1,3 +1,4 @@
+# pip install opencv-python-headless
 import cv2
 import numpy as np
 from scipy.spatial import distance as dist
