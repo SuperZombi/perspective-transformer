@@ -1,7 +1,6 @@
 import cv2
 import numpy as np
 from scipy.spatial import distance as dist
-import os
 from pathlib import Path
 
 class Perspective:
