@@ -1,90 +1,94 @@
 import cv2
 import numpy as np
 from scipy.spatial import distance as dist
+import os
+from pathlib import Path
 
-# Загрузка изображения
-img = cv2.imread('2.jpg')
+class Perspective:
+    def __init__(self, file):
+        self.file = Path(file)
+        self.img = cv2.imread(file)
 
-# Преобразование изображения в оттенки серого
-img_process = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    def filename(self, text=""):
+        return f"{self.file.with_suffix('')}{text}{self.file.suffix}"
 
-# img_process = cv2.GaussianBlur(img_process, (5, 5), 0)
-img_process = cv2.medianBlur(img_process, 5)
+    def preprocess(self):
+        # Преобразование изображения в оттенки серого
+        self.img_process = cv2.cvtColor(self.img, cv2.COLOR_BGR2GRAY)
 
-# canny = cv2.Canny(blur, 75, 200)
+        # Фильтрация
+        # self.img_process = cv2.GaussianBlur(self.img_process, (5, 5), 0)
+        self.img_process = cv2.medianBlur(self.img_process, 5)
 
-# cv2.imwrite('blur.png', canny)
+        # Гамма-коррекция
+        invGamma = 1.0 / 0.3
+        table = np.array([((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]).astype("uint8")
+        self.img_process = cv2.LUT(self.img_process, table)
 
-# Вычисление кривой гамма-коррекции
-invGamma = 1.0 / 0.3
-table = np.array([((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]).astype("uint8")
+        # Бинаризация
+        ret, self.thresh = cv2.threshold(self.img_process, 40, 255, cv2.THRESH_BINARY)
 
-# Применение гамма-коррекции с использованием таблицы преобразования
-img_process = cv2.LUT(img_process, table)
+        cv2.imwrite(self.filename("_binary"), self.thresh)
+        return self.filename("_binary")
 
-# Применение бинаризации к откорректированному изображению
-ret, thresh1 = cv2.threshold(img_process, 40, 200, cv2.THRESH_BINARY)
+    def findContours(self):
+        contours, hierarchy = cv2.findContours(self.thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-# cv2.imwrite('blur.png', thresh1)
+        # Функция для нахождения самого большого прямоугольника среди контуров
+        def biggestRectangle(contours):
+            max_area = 0
+            indexReturn = -1
+            for index in range(len(contours)):
+                i = contours[index]
+                area = cv2.contourArea(i)
+                if area > max_area:
+                    max_area = area
+                    indexReturn = index
+            return indexReturn
 
-# Нахождение контуров в бинаризованном изображении
-contours, hierarchy = cv2.findContours(thresh1, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        # Самая большая зона
+        indexReturn = biggestRectangle(contours)
+        self.contour = contours[indexReturn]
 
-# Функция для нахождения самого большого прямоугольника среди контуров
-def biggestRectangle(contours):
-    max_area = 0
-    indexReturn = -1
-    for index in range(len(contours)):
-        i = contours[index]
-        area = cv2.contourArea(i)
-        if area > max_area:
-            max_area = area
-            indexReturn = index
-    return indexReturn
+        cv2.imwrite(self.filename("_contour"), cv2.drawContours(self.img.copy(), [self.contour], 0, (0, 0, 255), 3))
+        return self.filename("_contour")
 
-# Получение индекса самого большого контура
-indexReturn = biggestRectangle(contours)
+    def findBox(self):
+        # Округление контура до 4 точек
+        epsilon = 0.009 * cv2.arcLength(self.contour, True)
+        self.approximations = cv2.approxPolyDP(self.contour, epsilon, True)
+        self.approximations = self.approximations.reshape(4,2)
 
-clean_cnt = contours[indexReturn]
+        # rect = cv2.minAreaRect(hull)
+        # box = cv2.boxPoints(rect)
+        # box = np.intp(box)
 
-# cv2.imwrite('hull.png', cv2.drawContours(img, [contours[indexReturn]], 0, (0, 255, 0), 3))
+        cv2.imwrite(self.filename("_box"), cv2.drawContours(self.img.copy(), [self.approximations], 0, (0, 255, 0), 2))
+        return self.filename("_box")
 
-# Округление контура до 4 точек
-epsilon = 0.009 * cv2.arcLength(clean_cnt, True)
-approximations = cv2.approxPolyDP(clean_cnt, epsilon, True)
-approximations = approximations.reshape(4,2)
+    def apply_transform(self):
+        def order_points(pts):
+            xSorted = pts[np.argsort(pts[:, 0]), :]
+            leftMost = xSorted[:2, :]
+            rightMost = xSorted[2:, :]
+            leftMost = leftMost[np.argsort(leftMost[:, 1]), :]
+            (tl, bl) = leftMost
+            D = dist.cdist(tl[np.newaxis], rightMost, "euclidean")[0]
+            (br, tr) = rightMost[np.argsort(D)[::-1], :]
+            return np.array([tl, tr, br, bl], dtype="float32")
 
-# rect = cv2.minAreaRect(hull)
-# box = cv2.boxPoints(rect) # cv2.cv.BoxPoints(rect) for OpenCV <3.x
-# box = np.intp(box)
+        # Сортировка точек LeftTop, RightTop, BottomRight, BottomLeft
+        box = np.array(self.approximations, dtype="int")
+        src_pts = order_points(box)
 
-# cv2.imwrite('test.png', cv2.drawContours(img, [approximations], 0, (0, 255, 0), 2))
+        # Евклидово расстояние
+        width = int(np.linalg.norm(src_pts[0] - src_pts[1]))
+        height = int(np.linalg.norm(src_pts[0] - src_pts[3]))
 
-def order_points(pts):
-    xSorted = pts[np.argsort(pts[:, 0]), :]
-    leftMost = xSorted[:2, :]
-    rightMost = xSorted[2:, :]
-    leftMost = leftMost[np.argsort(leftMost[:, 1]), :]
-    (tl, bl) = leftMost
-    D = dist.cdist(tl[np.newaxis], rightMost, "euclidean")[0]
-    (br, tr) = rightMost[np.argsort(D)[::-1], :]
-    return np.array([tl, tr, br, bl], dtype="float32")
+        dst_pts = np.array([[0,0], [width,0], [width,height], [0,height]], dtype=np.float32)
 
-def perspective_transformation_2(img, box):
-    """Perform perspective transformation for distorted license plates."""
-    box = np.array(box, dtype="int")
-    src_pts = order_points(box)
+        M = cv2.getPerspectiveTransform(src_pts, dst_pts)
+        result_img = cv2.warpPerspective(self.img, M, (width, height))
 
-    # use Euclidean distance to get width & height
-    width = int(np.linalg.norm(src_pts[0] - src_pts[1]))
-    height = int(np.linalg.norm(src_pts[0] - src_pts[3]))
-
-    dst_pts = np.array([[0,0], [width,0], [width,height], [0,height]], dtype=np.float32)
-
-    M = cv2.getPerspectiveTransform(src_pts, dst_pts)
-    warped_img = cv2.warpPerspective(img, M, (width, height))
-
-    return warped_img
-
-result = perspective_transformation_2(img, approximations)
-cv2.imwrite('final.png', result)
+        cv2.imwrite(self.filename("_transformed"), result_img)
+        return self.filename("_transformed")
