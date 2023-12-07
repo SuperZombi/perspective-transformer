@@ -26,7 +26,7 @@ class Perspective:
         self.img_process = cv2.LUT(self.img_process, table)
 
         # Бинаризация
-        ret, self.thresh = cv2.threshold(self.img_process, 40, 255, cv2.THRESH_BINARY)
+        ret, self.thresh = cv2.threshold(self.img_process, 40, 200, cv2.THRESH_BINARY)
 
         cv2.imwrite(self.filename("_binary"), self.thresh)
         return self.filename("_binary")
