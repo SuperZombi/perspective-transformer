@@ -30,7 +30,13 @@ html, body {
 
 img{
 	max-height: 400px;
-	max-width: 400px;
+	width: 400px;
+	object-fit: contain;
+	max-width: 100%;
+}
+.main_img{
+	padding: 10px;
+	box-sizing: border-box;
 }
 .loader{
 	height: 80px;
@@ -72,9 +78,6 @@ img{
 	box-shadow: rgba(20, 70, 32, .2) 0 1px 0 inset;
 }
 
-details{
-	margin: 10px;
-}
 details summary{
 	background-color: #0276FF;
 	font-size: 0.85rem !important;

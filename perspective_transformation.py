@@ -20,19 +20,14 @@ class Perspective:
         # self.img_process = cv2.GaussianBlur(self.img_process, (5, 5), 0)
         self.img_process = cv2.medianBlur(self.img_process, 5)
 
-        # Гамма-коррекция
-        invGamma = 1.0 / 0.3
-        table = np.array([((i / 255.0) ** invGamma) * 255 for i in np.arange(0, 256)]).astype("uint8")
-        self.img_process = cv2.LUT(self.img_process, table)
+        # Бинаризация Оцу
+        _, self.img_process = cv2.threshold(self.img_process, 0, 255, cv2.THRESH_BINARY+cv2.THRESH_OTSU)
 
-        # Бинаризация
-        ret, self.thresh = cv2.threshold(self.img_process, 40, 255, cv2.THRESH_BINARY)
-
-        cv2.imwrite(self.filename("_binary"), self.thresh)
+        cv2.imwrite(self.filename("_binary"), self.img_process)
         return self.filename("_binary")
 
     def findContours(self):
-        contours, hierarchy = cv2.findContours(self.thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+        contours, hierarchy = cv2.findContours(self.img_process, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
         # Функция для нахождения самого большого прямоугольника среди контуров
         def biggestRectangle(contours):

@@ -6,22 +6,25 @@
 
 {% block page %}
 	{% if status == 0 %}
-		<img src="{{original_file}}">
+		<img class="main_img" src="{{original_file}}">
 		<h3>Your image is processing...</h3>
 		<img class="loader" src="/static/images/loading.svg">
 		<script type="text/javascript">
 			setTimeout(_=>{window.location.reload()}, 3000)
 		</script>
-	{% elif status == 2 %}
-		<img src="/static/images/failed.gif" style="max-width: 100vw;">
-		<h2>Unable to process this image 😢</h2>
-	{% elif status == 1 %}
-		<img src="{{transformed}}">
-		<div>
-			<a href="{{transformed}}" id="download"  class="button" download="{{transformed}}">
-				<i class="fa fa-download"></i><span>Download</span>
-			</a>
-		</div>
+	{% else %}
+		{% if status == 1 %}
+			<img class="main_img" src="{{transformed}}">
+			<div>
+				<a href="{{transformed}}" id="download"  class="button" download="{{transformed}}">
+					<i class="fa fa-download"></i><span>Download</span>
+				</a>
+			</div>
+		{% elif status == 2 %}
+			<img src="/static/images/failed.gif">
+			<h2>Unable to process this image 😢</h2>
+		{% endif %}
+
 		<details>
 			<summary class="button">View History</summary>
 			<div class="content">
